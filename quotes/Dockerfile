@@ -1,22 +1,8 @@
-FROM nginx:1.14.0-alpine
+FROM nginx:alpine
 
-MAINTAINER Marcin Szuppe "Marcin.Szuppe@clurgo.com"
+COPY nginx.conf /etc/nginx/nginx.conf
+EXPOSE 80
 
-RUN apk --no-cache add \
-      python2 \
-      py2-pip && \
-    pip2 install j2cli[yaml]
+WORKDIR /usr/share/nginx/html
 
-RUN apk add --update bash && rm -rf /var/cache/apk/*
-
-RUN rm -rf /usr/share/nginx/html/*
-
-COPY /dist /usr/share/nginx/html
-
-COPY nginx.conf.j2 /templates/
-
-COPY docker-entrypoint.sh /
-
-ENTRYPOINT ["/docker-entrypoint.sh"]
-
-CMD ["nginx", "-g", "daemon off;"]
+COPY dist/quotes/ .
